@@ -1,0 +1,17 @@
+﻿<Window x:Class="internet.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:internet"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+    <Grid Margin="0,0,0,-21">
+        <TextBox HorizontalAlignment="Left" Height="23" Margin="27,31,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120"/>
+        <TextBox HorizontalAlignment="Left" Height="23" Margin="174,31,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120"/>
+        <TextBox x:Name="InputTB" HorizontalAlignment="Left" Height="34" Margin="10,375,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="616"/>
+        <Button Content="Button" HorizontalAlignment="Left" Margin="631,375,0,0" VerticalAlignment="Top" Width="151" Height="34" Click="Button_Click"/>
+        <ListBox x:Name="Chat" HorizontalAlignment="Left" Height="268" Margin="27,85,0,0" VerticalAlignment="Top" Width="267" SelectionChanged="ListBox_SelectionChanged"/>
+
+    </Grid>
+</Window>
