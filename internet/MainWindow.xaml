@@ -7,11 +7,15 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid Margin="0,0,0,-21">
-        <TextBox HorizontalAlignment="Left" Height="23" Margin="27,31,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120"/>
-        <TextBox HorizontalAlignment="Left" Height="23" Margin="174,31,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120"/>
+        <TextBox x:Name="IPInput" HorizontalAlignment="Left" Height="23" Margin="27,50,0,0" TextWrapping="Wrap" Text="127.0.0.1" VerticalAlignment="Top" Width="120" TextChanged="TextBox_TextChanged"/>
+        <TextBox x:Name="PortInput" HorizontalAlignment="Left" Height="23" Margin="174,50,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Text="8888"/>
         <TextBox x:Name="InputTB" HorizontalAlignment="Left" Height="34" Margin="10,375,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="616"/>
         <Button Content="Button" HorizontalAlignment="Left" Margin="631,375,0,0" VerticalAlignment="Top" Width="151" Height="34" Click="Button_Click"/>
         <ListBox x:Name="Chat" HorizontalAlignment="Left" Height="268" Margin="27,85,0,0" VerticalAlignment="Top" Width="267" SelectionChanged="ListBox_SelectionChanged"/>
+        <Label Content="IP" HorizontalAlignment="Left" Margin="27,19,0,0" VerticalAlignment="Top" Height="24"/>
+        <Label Content="Port" HorizontalAlignment="Left" Margin="174,19,0,0" VerticalAlignment="Top"/>
+        <Label Content="Port for listening" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="403,19,0,0" RenderTransformOrigin="0.061,-0.5"/>
+        <TextBox x:Name="ListeningPortInput" HorizontalAlignment="Left" Height="23" Margin="403,50,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" TextChanged="ListeningPortInput_TextChanged" Text="8888"/>
 
     </Grid>
 </Window>

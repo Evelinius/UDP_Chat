@@ -25,31 +25,71 @@ namespace internet
 
     public partial class MainWindow : Window
     {
+        UdpHelper UdpHelper;
+
         public MainWindow()
         {
             InitializeComponent();
-            Listen();
+            UdpHelper = new UdpHelper(int.Parse(PortInput.Text), IPInput.Text, int.Parse(ListeningPortInput.Text));
+            UdpHelper.OnMessageRecieved += HandleMessageRecieved;
         }
 
-        public void SendMessage(string text)
-        {
-            UdpClient Client = new UdpClient();
-            byte[] bytes = Encoding.UTF8.GetBytes(text);
-
-            Client.Send(bytes, bytes.Length, "127.0.0.1", 3333);
-        }
-
+       
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             DateTime time = DateTime.Now;
             Chat.Items.Add(time.ToString() + ": " + InputTB.Text);
-            SendMessage(InputTB.Text);
+            UdpHelper.SendMessage(InputTB.Text);
             InputTB.Text = "";
         }
 
-        public void Listen()
+       
+        private void ListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            UdpClient client = new UdpClient(3333);
+
+        }
+
+        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+
+        }
+
+        private void ListeningPortInput_TextChanged(object sender, TextChangedEventArgs e)
+        {
+
+        }
+
+        private void HandleMessageRecieved(object sender, EventArgs args)
+        {
+
+        }
+    }
+
+    public class UdpHelper
+    {
+        UdpClient Client;
+        int port;
+        string IP;
+
+
+        public UdpHelper(int _port, string _IP, int _listeningport)
+        {
+            port = _port;
+            IP = _IP;
+            Client = new UdpClient(_listeningport);
+            Listen();
+        }
+
+        public void SendMessage(string message)
+        {
+            byte[] bytes = Encoding.UTF8.GetBytes(message);
+            Client.Send(bytes, bytes.Length, this.IP, this.port);    
+        }
+
+        public event EventHandler OnMessageRecieved;
+
+        private void Listen()
+        {
             Task t = new Task(() =>
             {
                 while (true)
@@ -57,10 +97,10 @@ namespace internet
                     try
                     {
                         IPEndPoint iPEndPoint = null;
-                        byte[] bytes = client.Receive(ref iPEndPoint);
-                        Thread.Sleep(2000);
+                        byte[] bytes = Client.Receive(ref iPEndPoint);
+                        OnMessageRecieved.Invoke(this, EventArgs.Empty);
                     }
-                    catch(Exception e)
+                    catch (Exception e)
                     {
                         MessageBox.Show(e.Message);
                     }
@@ -71,9 +111,6 @@ namespace internet
             t.Start();
         }
 
-        private void ListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
 
-        }
     }
 }
