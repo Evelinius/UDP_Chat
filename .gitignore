@@ -1,3 +1,4 @@
 .vs/internet/v15/
-internet/obj/
+/internet/obj/
 internet/bin/
+packages/

@@ -1,20 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using System.Net.Sockets;
 using System.Net;
-using System.Threading;
+using Newtonsoft.Json;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.IO;
 
 namespace internet
 {
@@ -25,92 +16,84 @@ namespace internet
 
     public partial class MainWindow : Window
     {
-        UdpHelper UdpHelper;
+        UdpClient udp;
+
+        private ChatViewModel ChatViewModel => DataContext as ChatViewModel;
 
         public MainWindow()
         {
             InitializeComponent();
-            UdpHelper = new UdpHelper(int.Parse(PortInput.Text), IPInput.Text, int.Parse(ListeningPortInput.Text));
-            UdpHelper.OnMessageRecieved += HandleMessageRecieved;
-        }
+            DataContext = new ChatViewModel();
 
-       
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            DateTime time = DateTime.Now;
-            Chat.Items.Add(time.ToString() + ": " + InputTB.Text);
-            UdpHelper.SendMessage(InputTB.Text);
-            InputTB.Text = "";
-        }
-
-       
-        private void ListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-
-        }
-
-        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
-        {
-
-        }
-
-        private void ListeningPortInput_TextChanged(object sender, TextChangedEventArgs e)
-        {
-
-        }
-
-        private void HandleMessageRecieved(object sender, EventArgs args)
-        {
-
-        }
-    }
-
-    public class UdpHelper
-    {
-        UdpClient Client;
-        int port;
-        string IP;
-
-
-        public UdpHelper(int _port, string _IP, int _listeningport)
-        {
-            port = _port;
-            IP = _IP;
-            Client = new UdpClient(_listeningport);
-            Listen();
-        }
-
-        public void SendMessage(string message)
-        {
-            byte[] bytes = Encoding.UTF8.GetBytes(message);
-            Client.Send(bytes, bytes.Length, this.IP, this.port);    
-        }
-
-        public event EventHandler OnMessageRecieved;
-
-        private void Listen()
-        {
-            Task t = new Task(() =>
+            using (StreamReader sr = new StreamReader("./messages.json", Encoding.ASCII))
             {
-                while (true)
-                {
-                    try
-                    {
-                        IPEndPoint iPEndPoint = null;
-                        byte[] bytes = Client.Receive(ref iPEndPoint);
-                        OnMessageRecieved.Invoke(this, EventArgs.Empty);
-                    }
-                    catch (Exception e)
-                    {
-                        MessageBox.Show(e.Message);
-                    }
+                string Strmessages = sr.ReadToEnd();
+                ObservableCollection<Message> messages = JsonConvert.DeserializeObject<ObservableCollection<Message>>(Strmessages);
+                ChatViewModel.Messages = messages;
+            }
+        }
 
-                }
-            });
-
-            t.Start();
+        private async void Listen()
+        {
+            while (true)
+            {
+                var message = await udp.ReceiveAsync();
+                string decodedmes = Encoding.UTF8.GetString(message.Buffer);
+                ChatViewModel.Messages.Add(new Message(decodedmes, false));
+                SaveMessages();
+            }
         }
 
 
+        private async void Button_Click(object sender, RoutedEventArgs e)
+        {
+            if (ChatViewModel.MessageToSend != "")
+            {
+                byte[] CodeMes = Encoding.UTF8.GetBytes(ChatViewModel.MessageToSend);
+                await udp.SendAsync(CodeMes, CodeMes.Length, ChatViewModel.IP, ChatViewModel.SendPort);
+                ChatViewModel.Messages.Add(new Message(ChatViewModel.MessageToSend, true));
+                SaveMessages();
+                ChatViewModel.MessageToSend = "";
+            }
+        }
+
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+            var context = DataContext as ChatViewModel;
+            if(context.RecievePort.ToString() == "")
+            {
+                MessageBox.Show("Insert Port");
+            }
+            else
+            {
+                if(udp == null)
+                {
+                    udp = new UdpClient(context.RecievePort);
+                    Listen();
+                }
+                else
+                {
+                    udp = new UdpClient(context.RecievePort);
+                }
+            }
+          
+        }
+
+        private void SaveMessages()
+        {
+            ObservableCollection<Message> messages = ChatViewModel.Messages;
+            string serialized = JsonConvert.SerializeObject(messages, Formatting.Indented);
+            using (StreamWriter sw = new StreamWriter("./messages.json", false, Encoding.ASCII))
+            {
+                sw.Write(serialized);
+                sw.Close();
+            }
+        }
+
+        private void DeleteAllButton(object sender, RoutedEventArgs e)
+        {
+            ChatViewModel.Messages.Clear();
+            SaveMessages();
+        }
     }
 }

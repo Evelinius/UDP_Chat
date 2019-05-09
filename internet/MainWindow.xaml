@@ -6,16 +6,57 @@
         xmlns:local="clr-namespace:internet"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
-    <Grid Margin="0,0,0,-21">
-        <TextBox x:Name="IPInput" HorizontalAlignment="Left" Height="23" Margin="27,50,0,0" TextWrapping="Wrap" Text="127.0.0.1" VerticalAlignment="Top" Width="120" TextChanged="TextBox_TextChanged"/>
-        <TextBox x:Name="PortInput" HorizontalAlignment="Left" Height="23" Margin="174,50,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Text="8888"/>
-        <TextBox x:Name="InputTB" HorizontalAlignment="Left" Height="34" Margin="10,375,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="616"/>
-        <Button Content="Button" HorizontalAlignment="Left" Margin="631,375,0,0" VerticalAlignment="Top" Width="151" Height="34" Click="Button_Click"/>
-        <ListBox x:Name="Chat" HorizontalAlignment="Left" Height="268" Margin="27,85,0,0" VerticalAlignment="Top" Width="267" SelectionChanged="ListBox_SelectionChanged"/>
-        <Label Content="IP" HorizontalAlignment="Left" Margin="27,19,0,0" VerticalAlignment="Top" Height="24"/>
-        <Label Content="Port" HorizontalAlignment="Left" Margin="174,19,0,0" VerticalAlignment="Top"/>
-        <Label Content="Port for listening" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="403,19,0,0" RenderTransformOrigin="0.061,-0.5"/>
-        <TextBox x:Name="ListeningPortInput" HorizontalAlignment="Left" Height="23" Margin="403,50,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" TextChanged="ListeningPortInput_TextChanged" Text="8888"/>
-
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*"></ColumnDefinition>
+            <ColumnDefinition Width="4*"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <StackPanel Margin="10">
+            <Label>
+                Recieve Port
+            </Label>
+            <TextBox Margin="0,0,0,30" Text="{Binding RecievePort}">
+                 
+            </TextBox>
+            <Label>
+                Send Port
+            </Label>
+            <TextBox Margin="0,0,0,30" Text="{Binding SendPort}">
+                
+            </TextBox>
+            <Label>
+                IP
+            </Label>
+            <TextBox Text="{Binding IP}">
+                
+            </TextBox>
+            <Button Height ="30" Margin="0,10,0,0" Click="Button_Click_1">
+                Reload
+            </Button>
+            <Button Height ="30" Margin="0,10,0,0" Click="DeleteAllButton">
+                Delete all
+            </Button>
+        </StackPanel>
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="94*"></RowDefinition>
+                <RowDefinition Height="6*"></RowDefinition>
+            </Grid.RowDefinitions>
+            <ListBox Grid.Row="0" ItemsSource="{Binding Messages}">
+                
+            </ListBox>
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="80*"></ColumnDefinition>
+                    <ColumnDefinition Width="20*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <TextBox HorizontalAlignment="Stretch" Text="{Binding MessageToSend, UpdateSourceTrigger=PropertyChanged}">
+                    
+                </TextBox>
+                <Button Grid.Column="1"  Click="Button_Click" >
+                    Send
+                </Button>
+            </Grid>
+        </Grid>
     </Grid>
 </Window>
